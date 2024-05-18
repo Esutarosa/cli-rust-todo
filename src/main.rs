@@ -1,4 +1,3 @@
-use clap::{Parser, Subcommand};
 use serde::{Deserialize, Serialize};
 use std::fs::File;
 use std::io::{self, BufReader, BufWriter};
@@ -101,11 +100,17 @@ fn main() {
     let mut todo_list = TodoList::load(filename).expect("Failed to load todo list");
 
     loop {
+        println!("==========================");
         println!("What do you want to do?");
         println!("1. Add task");
         println!("2. Complete task");
         println!("3. List tasks");
         println!("4. Save and exit");
+        println!("5. Edit task");
+        println!("6. Delete task");
+        println!("7. Uncomplete task");
+        println!("8. Clear all tasks");
+        println!("==========================");
 
         let mut choice: String = String::new();
         io::stdin()
@@ -133,6 +138,54 @@ fn main() {
             4 => {
                 todo_list.save(filename).expect("Failed to save todo list");
                 break;
+            }
+            5 => {
+                println!("Enter task id to edit");
+                let mut id = String::new();
+                io::stdin().read_line(&mut id).expect("Failed to read line");
+                let id: usize = match id.trim().parse() {
+                    Ok(num) => num,
+                    Err(_) => {
+                        println!("Please enter a valid number");
+                        continue;
+                    }
+                };
+                println!("Enter new task description");
+                let mut description = String::new();
+                io::stdin()
+                    .read_line(&mut description)
+                    .expect("Failed to read line");
+                todo_list.edit(id, description.trim().to_string());
+            }
+            6 => {
+                println!("Enter task id to delete:");
+                let mut id = String::new();
+                io::stdin().read_line(&mut id).expect("Failed to read line");
+                let id: usize = match id.trim().parse() {
+                    Ok(num) => num,
+                    Err(_) => {
+                        println!("Please enter a valid number");
+                        continue;
+                    }
+                };
+                todo_list.delete(id);
+            }
+            7 => {
+                println!("Enter task id to uncomplete:");
+                let mut id = String::new();
+                io::stdin().read_line(&mut id).expect("Failed to read line");
+                let id: usize = match id.trim().parse() {
+                    Ok(num) => num,
+                    Err(_) => {
+                        println!("Please enter a valid number");
+                        continue;
+                    }
+                };
+                todo_list.uncomplete(id);
+            }
+            8 => {
+                todo_list.clear();
+                println!("All tasks have been cleared.");
             }
             _ => println!("Invalid choice, please try again"),
         }
