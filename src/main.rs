@@ -1,3 +1,4 @@
+use clap::{Parser, Subcommand};
 use serde::{Deserialize, Serialize};
 use std::fs::File;
 use std::io::{self, BufReader, BufWriter};
@@ -29,9 +30,33 @@ impl TodoList {
         });
     }
 
+    fn delete(&mut self, id: usize) {
+        if let Some(index) = self.items.iter().position(|i| i.id == id) {
+            self.items.remove(index);
+        } else {
+            println!("Task with id {} not found.", id);
+        }
+    }
+
+    fn edit(&mut self, id: usize, description: String) {
+        if let Some(item) = self.items.iter_mut().find(|i| i.id == id) {
+            item.description = description;
+        } else {
+            println!("Task with id {} not found.", id);
+        }
+    }
+
     fn complete(&mut self, id: usize) {
         if let Some(item) = self.items.iter_mut().find(|i| i.id == id) {
             item.completed = true;
+        } else {
+            println!("Task with id {} not found.", id);
+        }
+    }
+
+    fn uncomplete(&mut self, id: usize) {
+        if let Some(item) = self.items.iter_mut().find(|i| i.id == id) {
+            item.completed = false;
         } else {
             println!("Task with id {} not found.", id);
         }
@@ -46,6 +71,10 @@ impl TodoList {
                 if item.completed { "x" } else { " " }
             );
         }
+    }
+
+    fn clear(&mut self) {
+        self.items.clear();
     }
 
     fn save(&self, filename: &str) -> io::Result<()> {
