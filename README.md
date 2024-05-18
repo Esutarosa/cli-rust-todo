@@ -15,7 +15,7 @@ $ cargo install --git https://github.com/Esutarosa/cli-rust-todo.git --branch ma
 ## Usage
 
 ```sh-session
-$ <NUMBER>
+$ [NUMBER]
 
 1. Add task
 2. Complete task
